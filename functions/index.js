@@ -2,13 +2,8 @@
 /* eslint-disable no-constant-condition */
 const {initializeApp} = require("firebase-admin/app");
 const {onDocumentCreated} = require("firebase-functions/v2/firestore");
-const {
-  getFirestore,
-  // Timestamp,
-  // FieldValue,
-  FieldValue,
-} = require("firebase-admin/firestore");
-const {setGlobalOptions} = require("firebase-functions/v2");
+const {getFirestore, FieldValue} = require("firebase-admin/firestore");
+const {setGlobalOptions, logger} = require("firebase-functions/v2");
 // const logger = require("firebase-functions/logger");
 
 setGlobalOptions({maxInstances: 10});
@@ -27,8 +22,6 @@ exports.moralisEventsMerge = onDocumentCreated(
       }
 
       const data = snapshot.data();
-
-      // logger.log("data-", data);
 
       // // eslint-disable-next-line no-constant-condition
       // if (data.name === "Ongoing_Contests") {
@@ -53,7 +46,7 @@ exports.moralisEventsMerge = onDocumentCreated(
               });
             })
             .catch((err) => {
-              console.log(err);
+              logger.error(err);
             });
       }
     },
@@ -114,7 +107,7 @@ exports.moralisEnterContestMerge = onDocumentCreated(
               });
             })
             .catch((err) => {
-              console.log(err);
+              logger.error(err);
             });
       } else if (data.name === "Enter_Contest") {
         snapshot.ref.delete(); // here we are deleteing triggered document.
