@@ -79,7 +79,7 @@ exports.moralisEnterContestMerge = onDocumentCreated(
       //   return;
       // }
 
-      if (data.name === "Enter_Contest") {
+      if (data.name === "Enter_Contest" && data.confirmed) {
         return db
             .collection("moralis/events/Entercontests")
             .where("name", "==", "Enter_Contest")
@@ -94,12 +94,15 @@ exports.moralisEnterContestMerge = onDocumentCreated(
 
                 if (doc.data().Id == data.Id && doc.data().value != undefined) {
                   data[data.team] = data.value;
-                  deleteFields = {team: FieldValue.delete(), value: FieldValue.delete()};
+                  deleteFields = {
+                    team: FieldValue.delete(),
+                    value: FieldValue.delete(),
+                  };
                 } else {
                   data[data.team] = +data.value + (+doc.data()[data.team] || 0);
                   snapshot.ref.delete(); // here we are deleteing triggered document.
                 }
-                delete data.Id;
+                // delete data.Id;
                 delete data.team;
                 delete data.value;
 
@@ -113,6 +116,8 @@ exports.moralisEnterContestMerge = onDocumentCreated(
             .catch((err) => {
               console.log(err);
             });
+      } else if (data.name === "Enter_Contest") {
+        snapshot.ref.delete(); // here we are deleteing triggered document.
       }
     },
 );
